@@ -113,15 +113,50 @@ import subprocess
 # connect_to_database_and_run_curl()
 
 
-def create_unix_user(userPass, userId):
-    url = 'http://10.0.0.20:8080/api/add_unix_user/'
-    payload = {'userPass': userPass, 'userId': userId}
-    response = requests.post(url, data=payload)
-    data = response.json()
-    return data
+# def create_unix_user(userPass, userId):
+#     url = 'http://10.0.0.20:8080/api/add_unix_user/'
+#     payload = {'userPass': userPass, 'userId': userId}
+#     response = requests.post(url, data=payload)
+#     data = response.json()
+#     return data
 
-userPass = "password2"
-userId = "user1234"
-result = create_unix_user(userPass, userId)
-print(result)
+# userPass = "password2"
+# userId = "user1234"
+# result = create_unix_user(userPass, userId)
+# print(result)
+
+
+import mysql.connector
+import requests
+
+def create_unix_user(userPass, userId):
+    # Menghubungkan ke database
+    db = mysql.connector.connect(
+        host="127.0.0.1",
+        user="meliska",
+        password="meliska",
+        database="repository"
+    )
+
+    # Membuat kursor
+    cursor = db.cursor()
+
+    # Mengambil data dari tabel pengguna (user)
+    sql = "SELECT password, nim FROM users"
+    cursor.execute(sql)
+    data = cursor.fetchall()
+
+    # Menutup koneksi ke database
+    db.close()
+
+    # Mengirimkan data ke API
+    url = 'http://10.0.0.20:8080/api/add_unix_user/'
+    for row in data:
+        userPass = row[0]
+        userId = row[1]
+        payload = {'userPass': userPass, 'userId': userId}
+        response = requests.post(url, data=payload)
+        result = response.json()
+        print(result)
+
 
