@@ -154,7 +154,7 @@ def create_unix_user(userPass, userId):
     for row in data:
         userPass = row[0]
         userId = row[1]
-        payload = {'userPass': userPass, 'userId': userId}
+        payload = {'userPass': password, 'userId': nim}
         response = requests.post(url, data=payload)
         result = response.json()
         print(result)
