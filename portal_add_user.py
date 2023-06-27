@@ -97,9 +97,9 @@ def connect_to_database_and_run_curl():
                         print(message)
                         # Lakukan tindakan lain yang diperlukan berdasarkan pesan respons
                     else:
-                        print(f"Failed to get API response for user '{nim}'.")
+                        print(f"Failed to get API response for user '{password}'.")
                 else:
-                    print(f"Failed to make API request for user '{nim}'. Status code: {response.status_code}")
+                    print(f"Failed to make API request for user '{password}'. Status code: {response.status_code}")
             except requests.exceptions.RequestException as e:
                 print(f"Error making API request: {e}")
 
