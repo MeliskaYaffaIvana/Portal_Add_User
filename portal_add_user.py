@@ -7,7 +7,7 @@ import subprocess
 def connect_to_database_and_run_curl():
     try:
         # Menghubungkan ke database
-        cnx = mysql.connector.connect(user='root', password='', host='127.0.0.1', database='repository')
+        cnx = mysql.connector.connect(user='meliska', password='meliska', host='10.0.0.20', database='repository')
         cursor = cnx.cursor()
 
         # Mendapatkan data username dan password dari database
