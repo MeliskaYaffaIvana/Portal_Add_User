@@ -5,6 +5,8 @@ import mysql.connector
 import subprocess
 import requests
 
+import requests
+
 def connect_to_database_and_run_curl():
     try:
         # Menghubungkan ke database
@@ -20,26 +22,30 @@ def connect_to_database_and_run_curl():
             nim, password = user
 
             url = 'http://10.0.0.20:8080/api/add_unix_user/'
-            payload = {'userPass': password, 'userId': nim}
 
-            try:
-                # Mengirim permintaan POST menggunakan library requests
-                response = requests.post(url, json=payload)
+            if nim is not None and password is not None:
+                payload = {'userPass': password, 'userId': nim}
 
-                if response.status_code == 200:
-                    data = response.json()
+                try:
+                    # Mengirim permintaan POST menggunakan library requests
+                    response = requests.post(url, json=payload)
 
-                    if data is not None:
-                        # Menggunakan pesan respons untuk tindakan lanjutan
-                        message = f"Received response from API for user '{nim}': {data}"
-                        print(message)
-                        # Lakukan tindakan lain yang diperlukan berdasarkan pesan respons
+                    if response.status_code == 200:
+                        data = response.json()
+
+                        if data is not None:
+                            # Menggunakan pesan respons untuk tindakan lanjutan
+                            message = f"Received response from API for user '{nim}': {data}"
+                            print(message)
+                            # Lakukan tindakan lain yang diperlukan berdasarkan pesan respons
+                        else:
+                            print(f"Failed to get API response for user '{nim}'.")
                     else:
-                        print(f"Failed to get API response for user '{nim}'.")
-                else:
-                    print(f"Failed to make API request for user '{nim}'. Status code: {response.status_code}")
-            except requests.exceptions.RequestException as e:
-                print(f"Error making API request: {e}")
+                        print(f"Failed to make API request for user '{nim}'. Status code: {response.status_code}")
+                except requests.exceptions.RequestException as e:
+                    print(f"Error making API request: {e}")
+            else:
+                print(f"Invalid nim or password for user '{nim}'")
 
         # Menutup koneksi ke database
         cursor.close()
@@ -49,6 +55,7 @@ def connect_to_database_and_run_curl():
 
 # Panggil fungsi untuk terhubung ke database dan menjalankan permintaan POST
 connect_to_database_and_run_curl()
+
 
 # def connect_to_database_and_run_curl():
 #     try:
