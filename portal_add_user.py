@@ -81,7 +81,7 @@ def connect_to_database_and_run_curl():
         for user in users:
             nim, password = user
 
-            url = 'http://127.0.0.1:8080/api/add_unix_user/'
+            url = 'http://10.0.0.20:8080/api/add_unix_user/'
             payload = {'userPass': password, 'userId': nim}
 
             try:
