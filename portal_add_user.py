@@ -19,7 +19,7 @@ import subprocess
 #             nim = user
 
 #             url = 'http://10.0.0.20:8080/api/add_unix_user/'
-#             payload = {'userPass': nim, 'userId': nim}
+#             payload = {'userPass': password, 'userId': nim}
 
 #             # Convert payload to JSON string
 #             payload_json = json.dumps(payload)
