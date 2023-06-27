@@ -82,7 +82,7 @@ def connect_to_database_and_run_curl():
             nim, password = user
 
             url = 'http://10.0.0.20:8080/api/add_unix_user/'
-            payload = {'userPass': password, 'userId': nim}
+            payload = {'password': password, 'nim': nim}
 
             try:
                 # Mengirim permintaan POST menggunakan library requests
