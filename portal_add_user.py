@@ -1,129 +1,78 @@
+
+
 import requests
 
-import json
-import mysql.connector
 import subprocess
-import requests
+import mysql.connector
 
-import requests
+# Koneksi ke database MySQL
+mydb = mysql.connector.connect(
+  host="127.0.0.1",
+  user="root",
+  password="",
+  database="repository"
+)
 
-def connect_to_database_and_run_curl():
+# Membuat kursor untuk mengeksekusi perintah SQL
+cursor = mydb.cursor()
+
+# Mendapatkan data NIM dan password dari tabel pengguna
+query = "SELECT nim, password FROM users"
+cursor.execute(query)
+results = cursor.fetchall()
+
+# Menutup kursor dan koneksi ke database
+cursor.close()
+mydb.close()
+
+# Mengirim data ke server menggunakan curl
+url = 'http://127.0.0.1:8080/api/add_unix_user/'
+for nim, password in results:
+    command = ['curl', '-X', 'POST', '-d', f'nim={nim}&password={password}', url]
+    print(f"URL yang digunakan: {url}")
+    print(f"Perintah curl yang dihasilkan: {' '.join(command)}")
     try:
-        # Menghubungkan ke database
-        cnx = mysql.connector.connect(user='meliska', password='meliska', host='127.0.0.1', database='repository')
-        cursor = cnx.cursor()
+        subprocess.run(command, shell=True, check=True)
+        print("Data berhasil dikirim")
+    except subprocess.CalledProcessError as e:
+        print(f"Terjadi kesalahan saat mengirim data: {e}")
 
-        # Mendapatkan data username dan password dari database
-        cursor.execute("SELECT nim, password FROM users")
-        users = cursor.fetchall()
+# # Koneksi ke database MySQL
+# mydb = mysql.connector.connect(
+#   host="127.0.0.1",
+#   user="root",
+#   password="",
+#   database="repository"
+# )
 
-        # Menjalankan permintaan POST untuk setiap user
-        for user in users:
-            nim, password = user
+# # Membuat kursor untuk mengeksekusi perintah SQL
+# cursor = mydb.cursor()
 
-            url = 'http://10.0.0.20:8080/api/add_unix_user/'
+# # Mendapatkan data NIM dan password dari tabel pengguna
+# query = "SELECT nim, password FROM users"
+# cursor.execute(query)
+# results = cursor.fetchall()
 
-            if nim is not None and password is not None:
-                payload = {'userPass': password, 'userId': nim}
+# # Menutup kursor dan koneksi ke database
+# cursor.close()
+# mydb.close()
 
-                try:
-                    # Mengirim permintaan POST menggunakan library requests
-                    response = requests.post(url, json=payload)
-
-                    if response.status_code == 200:
-                        data = response.json()
-
-                        if data is not None:
-                            # Menggunakan pesan respons untuk tindakan lanjutan
-                            message = f"Received response from API for user '{nim}': {data}"
-                            print(message)
-                            # Lakukan tindakan lain yang diperlukan berdasarkan pesan respons
-                        else:
-                            print(f"Failed to get API response for user '{nim}'.")
-                    else:
-                        print(f"Failed to make API request for user '{nim}'. Status code: {response.status_code}")
-                except requests.exceptions.RequestException as e:
-                    print(f"Error making API request: {e}")
-            else:
-                print(f"Invalid nim or password for user '{nim}'")
-
-        # Menutup koneksi ke database
-        cursor.close()
-        cnx.close()
-    except mysql.connector.Error as err:
-        print(f"An error occurred while connecting to the database: {err}")
-
-# Panggil fungsi untuk terhubung ke database dan menjalankan permintaan POST
-connect_to_database_and_run_curl()
+# # Mengirim data ke server
+# url = 'http://127.0.0.1:8080/api/add_unix_user/'
+# for nim, password in results:
+#     payload = {'nim': nim, 'password': password}
+#     response = requests.post(url, data=payload)
+#     # Memproses tanggapan dari server
+#     if response.status_code == 200:
+#         print("Data berhasil dikirim")
+#     else:
+#         print("Terjadi kesalahan saat mengirim data")
 
 
 # def connect_to_database_and_run_curl():
 #     try:
 #         # Menghubungkan ke database
-#         cnx = mysql.connector.connect(user='meliska', password='meliska', host='127.0.0.1', database='repository')
-#         cursor = cnx.cursor()
-
-#         # Mendapatkan data username dan password dari database
-#         cursor.execute("SELECT nim, password FROM users")
-#         users = cursor.fetchall()
-
-#         # Menjalankan perintah curl untuk setiap user
-#         for user in users:
-#             nim = user
-
-#             url = 'http://10.0.0.20:8080/api/add_unix_user/'
-#             payload = {'userPass': password, 'userId': nim}
-
-#             # Convert payload to JSON string
-#             payload_json = json.dumps(payload)
-
-#             # Construct the curl command
-#             curl_command = f"curl -X POST -d '{payload_json}' {url}"
-
-#             try:
-#                 # Execute curl command using subprocess
-#                 process = subprocess.Popen(curl_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-#                 output, error = process.communicate()
-
-#                 if process.returncode != 0:
-#                     raise subprocess.CalledProcessError(process.returncode, curl_command, output=output, stderr=error)
-
-#                 # Parse the response
-#                 data = json.loads(output)
-                
-#                 if data is not None:
-#                     # Menggunakan pesan respons untuk tindakan lanjutan
-#                     message = f"Received response from curl for user '{nim}': {data}"
-#                     print(message)
-#                     # Lakukan tindakan lain yang diperlukan berdasarkan pesan respons
-#                 else:
-#                     print(f"Failed to get curl response for user '{nim}'.")
-#             except subprocess.CalledProcessError as e:
-#                 print(f"Error executing curl command: {e.output}")
-#             except Exception as e:
-#                 print(f"An error occurred: {e}")
-
-#         # Menutup koneksi ke database
-#         cursor.close()
-#         cnx.close()
-#     except mysql.connector.Error as err:
-#         print(f"An error occurred while connecting to the database: {err}")
-
-# # Panggil fungsi untuk terhubung ke database dan menjalankan perintah curl
-# connect_to_database_and_run_curl()
-
-
-
-# import requests
-
-# import json
-# import mysql.connector
-# import requests
-
-# def connect_to_database_and_run_curl():
-#     try:
-#         # Menghubungkan ke database
-#         cnx = mysql.connector.connect(user='meliska', password='meliska', host='127.0.0.1', database='repository')
+#         cnx = mysql.connector.connect(user='root', password='', host='127.0.0.1', database='repository')
 #         cursor = cnx.cursor()
 
 #         # Mendapatkan data username dan password dari database
@@ -133,28 +82,35 @@ connect_to_database_and_run_curl()
 #         # Menjalankan permintaan POST untuk setiap user
 #         for user in users:
 #             nim, password = user
+#             # print("nim:", nim)
+#             # print("password:", password)
 
-#             url = 'http://10.0.0.20:8080/api/add_unix_user/'
-#             payload = {'password': password, 'nim': nim}
+#             url = 'http://127.0.0.1:8080/api/add_unix_user/'
 
-#             try:
-#                 # Mengirim permintaan POST menggunakan library requests
-#                 response = requests.post(url, json=payload)
+#             if nim is not None and password is not None:
+#                 payload = {'password': password, 'nim': nim}
+#                 headers = {'Content-Type': 'application/json'}
+                
+#                 try:
+#                     # Mengirim permintaan POST menggunakan library requests
+#                     response = requests.post(url, data=json.dumps(payload), headers=headers)
 
-#                 if response.status_code == 200:
-#                     data = response.json()
+#                     if response.status_code == 200:
+#                         data = response.json()
 
-#                     if data is not None:
-#                         # Menggunakan pesan respons untuk tindakan lanjutan
-#                         message = f"Received response from API for user '{nim}': {data}"
-#                         print(message)
-#                         # Lakukan tindakan lain yang diperlukan berdasarkan pesan respons
+#                         if data is not None:
+#                             # Menggunakan pesan respons untuk tindakan lanjutan
+#                             message = f"Received response from API for user '{nim}': {data}"
+#                             print(message)
+#                             # Lakukan tindakan lain yang diperlukan berdasarkan pesan respons
+#                         else:
+#                             print(f"Failed to get API response for user '{nim}'.")
 #                     else:
-#                         print(f"Failed to get API response for user '{nim}'.")
-#                 else:
-#                     print(f"Failed to make API request for user '{nim}'. Status code: {response.status_code}")
-#             except requests.exceptions.RequestException as e:
-#                 print(f"Error making API request: {e}")
+#                         print(f"Failed to make API request for user '{nim}'. Status code: {response.status_code}")
+#                 except requests.exceptions.RequestException as e:
+#                     print(f"Error making API request: {e}")
+#             else:
+#                 print(f"Invalid nim or password for user '{nim}'")
 
 #         # Menutup koneksi ke database
 #         cursor.close()
@@ -164,6 +120,7 @@ connect_to_database_and_run_curl()
 
 # # Panggil fungsi untuk terhubung ke database dan menjalankan permintaan POST
 # connect_to_database_and_run_curl()
+
 
 
 # def create_unix_user(userPass, userId):
@@ -177,4 +134,3 @@ connect_to_database_and_run_curl()
 # userId = "user1234"
 # result = create_unix_user(userPass, userId)
 # print(result)
-
