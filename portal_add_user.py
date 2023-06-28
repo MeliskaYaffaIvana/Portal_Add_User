@@ -18,7 +18,7 @@ mydb = mysql.connector.connect(
 cursor = mydb.cursor()
 
 # Mendapatkan data NIM dan password dari tabel pengguna
-query = "SELECT nim, password FROM users"
+query = "SELECT nim FROM users"
 cursor.execute(query)
 results = cursor.fetchall()
 
@@ -29,7 +29,7 @@ mydb.close()
 # Mengirim data ke server menggunakan curl
 url = 'http://10.0.0.20:8080/api/add_unix_user/'
 for nim, password in results:
-    data = f'nim={nim}&password={password}'
+    data = f'nim={nim}&password={nim}'
     command = f'curl -X POST --data-urlencode "{data}" {url}'
     print(f"URL yang digunakan: {url}")
     print(f"Perintah curl yang dihasilkan: {' '.join(command)}")
