@@ -4,6 +4,7 @@ import requests
 
 import subprocess
 import mysql.connector
+import shlex
 
 # Koneksi ke database MySQL
 mydb = mysql.connector.connect(
@@ -28,7 +29,8 @@ mydb.close()
 # Mengirim data ke server menggunakan curl
 url = 'http://10.0.0.20:8080/api/add_unix_user/'
 for nim, password in results:
-    command = ['curl', '-X', 'POST', '-d', f'nim={nim}&password={password}', url]
+    data = f'nim={nim}&password={password}'
+    command = f'curl -X POST --data-urlencode "{data}" {url}'
     print(f"URL yang digunakan: {url}")
     print(f"Perintah curl yang dihasilkan: {' '.join(command)}")
     try:
