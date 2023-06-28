@@ -8,8 +8,8 @@ import mysql.connector
 # Koneksi ke database MySQL
 mydb = mysql.connector.connect(
   host="127.0.0.1",
-  user="root",
-  password="",
+  user="meliska",
+  password="meliska",
   database="repository"
 )
 
@@ -26,7 +26,7 @@ cursor.close()
 mydb.close()
 
 # Mengirim data ke server menggunakan curl
-url = 'http://127.0.0.1:8080/api/add_unix_user/'
+url = 'http://10.0.0.20:8080/api/add_unix_user/'
 for nim, password in results:
     command = ['curl', '-X', 'POST', '-d', f'nim={nim}&password={password}', url]
     print(f"URL yang digunakan: {url}")
