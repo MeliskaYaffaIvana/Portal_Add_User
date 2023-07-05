@@ -29,6 +29,11 @@ for id, nim in results:
     try:
         subprocess.run(command, shell=True, check=True)
         print("Data berhasil dikirim")
+        # Update 'terdaftar' attribute in the database to 1
+        update_query = "UPDATE users SET terdaftar = 1 WHERE id = %s"
+        cursor.execute(update_query, (id,))
+        mydb.commit()
+        print("Data berhasil diperbarui")
     except subprocess.CalledProcessError as e:
         print(f"Terjadi kesalahan saat mengirim data: {e}")
 
